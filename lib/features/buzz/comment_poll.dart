@@ -590,7 +590,7 @@ class _PollWidgetState extends State<PollWidget> {
 
       final votesRaw = await _sb.from('poll_votes')
           .select()
-          .eq('poll_id', pollData['id'].toString());
+          .eq('poll_id', pollData['id']);
       if (!mounted) return;
       final votes = List<Map<String, dynamic>>.from(votesRaw as List);
 
@@ -627,7 +627,7 @@ class _PollWidgetState extends State<PollWidget> {
     try {
       final votesRaw = await _sb.from('poll_votes')
           .select()
-          .eq('poll_id', _poll!['id'].toString());
+          .eq('poll_id', _poll!['id']);
       if (!mounted) return;
       final votes = List<Map<String, dynamic>>.from(votesRaw as List);
 
@@ -670,7 +670,7 @@ class _PollWidgetState extends State<PollWidget> {
         // ── REMOVE vote: tapped same option again ──
         await _sb.from('poll_votes')
             .delete()
-            .eq('poll_id', _poll!['id'].toString())
+            .eq('poll_id', _poll!['id'])
             .eq('user_id', widget.myUserId!);
         if (mounted) setState(() {
           _votes.removeWhere((v) => v['user_id'] == widget.myUserId);
@@ -679,14 +679,9 @@ class _PollWidgetState extends State<PollWidget> {
       } else if (alreadyVoted && !sameOption) {
         // ── CHANGE vote: tapped a different option ──
         await _sb.from('poll_votes')
-            .delete()
-            .eq('poll_id', _poll!['id'].toString())
+            .update({'option_index': optionIndex})
+            .eq('poll_id', _poll!['id'])
             .eq('user_id', widget.myUserId!);
-        await _sb.from('poll_votes').insert({
-          'poll_id':      _poll!['id'],
-          'user_id':      widget.myUserId,
-          'option_index': optionIndex,
-        });
         if (mounted) setState(() {
           _votes.removeWhere((v) => v['user_id'] == widget.myUserId);
           _votes.add({
@@ -698,13 +693,22 @@ class _PollWidgetState extends State<PollWidget> {
         });
       } else {
         // ── NEW vote: first time voting ──
-        await _sb.from('poll_votes').insert({
-          'poll_id':      _poll!['id'],
-          'user_id':      widget.myUserId,
-          'option_index': optionIndex,
-        });
+        try {
+          await _sb.from('poll_votes').insert({
+            'poll_id':      _poll!['id'],
+            'user_id':      widget.myUserId,
+            'option_index': optionIndex,
+          });
+        } catch (_) {
+          // Fallback to update if insert fails (e.g. old vote wasn't properly deleted)
+          await _sb.from('poll_votes')
+              .update({'option_index': optionIndex})
+              .eq('poll_id', _poll!['id'])
+              .eq('user_id', widget.myUserId!);
+        }
         if (mounted) setState(() {
           _myVote = optionIndex;
+          _votes.removeWhere((v) => v['user_id'] == widget.myUserId);
           _votes.add({
             'poll_id':      _poll!['id'],
             'user_id':      widget.myUserId,

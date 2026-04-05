@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/dsa_problem.dart';
 import '../services/dsa_service.dart';
+import 'dsa_lobby_screen.dart';
 
 class DsaGameScreen extends StatefulWidget {
   final String roomId;
@@ -223,7 +224,12 @@ class _DsaGameScreenState extends State<DsaGameScreen>
         'p_game_type': 'dsa_win',
       });
 
-      if (mounted) Navigator.of(context).pop();
+      if (mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const DsaLobbyScreen()),
+          (_) => false,
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

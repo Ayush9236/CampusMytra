@@ -258,6 +258,25 @@ class _UnoGameScreenState extends State<UnoGameScreen>
     final prevPending   = _pendingDraw;
     final incomingCurrentId = room['current_player_id']?.toString();
 
+    // SAFETY NET: If only 1 player remains and the game is not finished, they win by default.
+    if (order.length == 1 && !isFinished && !_gameOver) {
+      if (order[0] == _myId) {
+        try {
+          _sb.rpc('update_user_coins', params: {
+            'p_user_id': _myId,
+            'p_amount': 50,
+            'p_game_type': 'uno_win',
+            'p_description': 'Won by opponent quit',
+          }).then((_) {});
+        } catch (_) {}
+        _sb.from('multi_game_rooms').update({
+          'status': 'finished',
+          'winner_id': _myId,
+          'updated_at': DateTime.now().toIso8601String(),
+        }).eq('id', widget.roomId);
+      }
+    }
+
     setState(() {
       _room            = room;
       _playerOrder     = order;
@@ -899,20 +918,22 @@ class _UnoGameScreenState extends State<UnoGameScreen>
       }
     }
 
-    // 2. Leave the room
-    try {
-      await _sb.rpc('leave_multi_room', params: {
-        'p_room_id': widget.roomId, 'p_user_id': uid,
-      });
-    } catch (_) {}
-
-    // 3. If only 1 player remains, mark them as winner + record in match_history
+    // 2. If only 1 player remains, mark them as winner + record in match_history
+    // We do this BEFORE leaving the room to ensure we still have database access.
     if (!_gameOver) {
       try {
         final allIds = List<String>.from(_playerOrder);
         final remaining = List<String>.from(allIds)..remove(uid);
         if (remaining.length == 1) {
           final winnerId = remaining[0];
+          try {
+            await _sb.rpc('update_user_coins', params: {
+              'p_user_id': winnerId,
+              'p_amount': 50,
+              'p_game_type': 'uno_win',
+              'p_description': 'Won by opponent quit',
+            });
+          } catch (_) {}
           await _sb.from('multi_game_rooms').update({
             'status': 'finished',
             'winner_id': winnerId,
@@ -933,6 +954,13 @@ class _UnoGameScreenState extends State<UnoGameScreen>
         }
       } catch (_) {}
     }
+
+    // 3. Leave the room
+    try {
+      await _sb.rpc('leave_multi_room', params: {
+        'p_room_id': widget.roomId, 'p_user_id': uid,
+      });
+    } catch (_) {}
 
     // 4. Navigate away
     if (mounted) {
@@ -1087,6 +1115,14 @@ class _UnoGameScreenState extends State<UnoGameScreen>
       // 2-player: other player wins
       final allIds = List<String>.from(_playerOrder);
       try {
+        try {
+          await _sb.rpc('update_user_coins', params: {
+            'p_user_id': _myId,
+            'p_amount': 50,
+            'p_game_type': 'uno_win',
+            'p_description': 'Won by opponent offline',
+          });
+        } catch (_) {}
         await _sb.from('multi_game_rooms').update({
           'status': 'finished',
           'winner_id': _myId,
@@ -1118,6 +1154,14 @@ class _UnoGameScreenState extends State<UnoGameScreen>
 
       // If only 1 player remains, they win
       if (newOrder.length == 1) {
+        try {
+          await _sb.rpc('update_user_coins', params: {
+            'p_user_id': newOrder[0],
+            'p_amount': 50,
+            'p_game_type': 'uno_win',
+            'p_description': 'Won by opponent offline',
+          });
+        } catch (_) {}
         await _sb.from('multi_game_rooms').update({
           'status': 'finished',
           'winner_id': newOrder[0],
@@ -2818,12 +2862,15 @@ class _ChatPanel extends StatelessWidget {
                             onSubmitted: (_) => onSend(),
                             style: const TextStyle(
                                 color: Colors.white, fontSize: 14),
+                            cursorColor: Colors.white,
                             decoration: const InputDecoration(
                               hintText: 'Say something…',
                               hintStyle: TextStyle(
                                   color: Colors.white24, fontSize: 13),
                               border: InputBorder.none,
                               counterText: '',
+                              filled: true,
+                              fillColor: Colors.transparent,
                               contentPadding: EdgeInsets.symmetric(
                                   horizontal: 14, vertical: 12),
                             ),
