@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#F5F5F7</color>
+    <color name="ic_launcher_christmas_background">#F5F5F7</color>
+    <color name="ic_launcher_diwali_background">#F5F5F7</color>
+    <color name="ic_launcher_holi_background">#F5F5F7</color>
+    <color name="ic_launcher_newyear2027_background">#F5F5F7</color>
+    <color name="ic_launcher_newyear2028_background">#F5F5F7</color>
+    <color name="ic_launcher_newyear2029_background">#F5F5F7</color>
+    <color name="ic_launcher_newyear2030_background">#F5F5F7</color>
+    <color name="ic_launcher_newyear2031_background">#F5F5F7</color>
+    <color name="ic_launcher_rakhi_background">#F5F5F7</color>
+    <color name="ic_launcher_ramnavami_background">#F5F5F7</color>
+    <color name="ic_launcher_spring_background">#F5F5F7</color>
+    <color name="ic_launcher_summers_background">#F5F5F7</color>
+    <color name="ic_launcher_winters_background">#F5F5F7</color>
+</resources>
