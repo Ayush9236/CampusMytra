@@ -265,8 +265,7 @@ class DsaService {
     required int langId,
     required String stdin,
   }) async {
-    const anonKey =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1a3huYmlmb2pvYm1lcnNwdnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyMzAxOTgsImV4cCI6MjA4NjgwNjE5OH0.-go5he8W7NmSaJJYbkj8rHoYST0SBTuk4yZdIC7EIJg';
+    const anonKey = 'YOUR_SUPABASE_ANON_KEY'; // TODO: Move to .env
     final token = supabase.auth.currentSession?.accessToken ?? anonKey;
 
     final res = await http.post(
@@ -744,8 +743,7 @@ class DsaService {
     required List<Map<String, String>> messages,
     required String language,
   }) async {
-    const anonKey =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1a3huYmlmb2pvYm1lcnNwdnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyMzAxOTgsImV4cCI6MjA4NjgwNjE5OH0.-go5he8W7NmSaJJYbkj8rHoYST0SBTuk4yZdIC7EIJg';
+    const anonKey = 'YOUR_SUPABASE_ANON_KEY'; // TODO: Move to .env
     final token = supabase.auth.currentSession?.accessToken ?? anonKey;
 
     final response = await http.post(

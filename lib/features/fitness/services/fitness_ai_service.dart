@@ -7,12 +7,10 @@ import '../data/food_database.dart';
 
 // Gemini calls go through a Supabase Edge Function proxy so the API key
 // never lives in the APK binary.
-const String _kGeminiProxyUrl =
-    'https://iukxnbifojobmerspvxn.supabase.co/functions/v1/gemini-proxy';
+const String _kGeminiProxyUrl = 'YOUR_SUPABASE_FUNCTION_URL'; // TODO: Move to .env
 
 // Supabase anon key — public by design; real auth is enforced by Supabase RLS.
-const String _kAnonKey =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1a3huYmlmb2pvYm1lcnNwdnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEyMzAxOTgsImV4cCI6MjA4NjgwNjE5OH0.-go5he8W7NmSaJJYbkj8rHoYST0SBTuk4yZdIC7EIJg';
+const String _kAnonKey = 'YOUR_SUPABASE_ANON_KEY'; // TODO: Move to .env
 
 /// Sends [prompt] to the AI proxy (Groq backend).
 /// Returns the response text, or null on failure.
