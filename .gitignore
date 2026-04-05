@@ -74,3 +74,6 @@ lib/features/admin/admin_secrets.dart
 # Local AI Tools & Build Artifacts
 .claude/
 *.apk
+
+# Internal Private Documentation
+DEVELOPER_DOCS.md
