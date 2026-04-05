@@ -77,3 +77,5 @@ lib/features/admin/admin_secrets.dart
 
 # Internal Private Documentation
 DEVELOPER_DOCS.md
+README.md
+readme.md
