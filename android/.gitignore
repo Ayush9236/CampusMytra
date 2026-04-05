@@ -12,3 +12,7 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+
+# Ignore Supabase migrations and k6 load test
+*.sql
+k6_load_test.js

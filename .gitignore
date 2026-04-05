@@ -67,6 +67,8 @@ android/key.properties
 # Supabase Local / Edge Functions configs
 supabase/.temp/
 supabase/functions/.env
+*.sql
+k6_load_test.js
 
 # Admin Secrets
 lib/features/admin/admin_secrets.dart
